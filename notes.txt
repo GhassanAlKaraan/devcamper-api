@@ -1,0 +1,15 @@
+// Express base request method
+app.get("/", (req, res) => {
+  //*1 Send html/text
+  // res.send("<h1>Hello World</h1>")
+  //*2 Send Json object
+  // res.send({ name: "Gass" });
+  // or
+  // res.json({ name: "Gass" });
+  //*3 Send status
+  // res.sendStatus(400);
+  //*4 Send status with message
+  // res.status(400).json({ success: false });
+  //*5 Best
+  res.status(200).json({ success: true, data: { id: 1 } });
+});
