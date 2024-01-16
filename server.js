@@ -20,6 +20,10 @@ const app = express();
 const PORT = process.env.PORT || 5000; // if not available for some reason
 const ENVIR = process.env.NODE_ENV;
 
+// Mount Body parser
+app.use(express.json());
+
+
 // Mount Dev logging middleware
 if (ENVIR === 'development') {
   app.use(morgan('dev'));
