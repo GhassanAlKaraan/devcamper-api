@@ -3,6 +3,7 @@ const express = require('express');
 const dotenv = require('dotenv');
 const colors = require('colors');
 const morgan = require('morgan'); // Logging middleware dependency
+const errorHandler = require('./middleware/error');
 const connectDB = require('./config/db');
 
 // Load env vars
@@ -23,7 +24,6 @@ const ENVIR = process.env.NODE_ENV;
 // Mount Body parser
 app.use(express.json());
 
-
 // Mount Dev logging middleware
 if (ENVIR === 'development') {
   app.use(morgan('dev'));
@@ -32,6 +32,9 @@ if (ENVIR === 'development') {
 // Mount routers
 app.use('/api/v1/bootcamps', bootcamps);
 
+// Mount error handler middleware (here's the correct place to add it)
+app.use(errorHandler);
+
 // Express listener
 const server = app.listen(
   PORT,
@@ -39,8 +42,8 @@ const server = app.listen(
 );
 
 // Handle unhandled promise rejections
-process.on('unhandledRejection', (err, promise)=>{
+process.on('unhandledRejection', (err, promise) => {
   console.log(`Error: ${err.message}`.red);
   // Close Server and close process
-  server.close(()=>process.exit(1));
+  server.close(() => process.exit(1));
 });
