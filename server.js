@@ -1,6 +1,7 @@
 // Load required dependencies
 const express = require('express');
 const dotenv = require('dotenv');
+const colors = require('colors');
 const morgan = require('morgan'); // Logging middleware dependency
 const connectDB = require('./config/db');
 
@@ -28,7 +29,14 @@ if (ENVIR === 'development') {
 app.use('/api/v1/bootcamps', bootcamps);
 
 // Express listener
-app.listen(
+const server = app.listen(
   PORT,
-  console.log(`Server running in ${ENVIR} mode on port ${PORT}`)
+  console.log(`Server running in ${ENVIR} mode on port ${PORT}`.yellow.bold)
 );
+
+// Handle unhandled promise rejections
+process.on('unhandledRejection', (err, promise)=>{
+  console.log(`Error: ${err.message}`.red);
+  // Close Server and close process
+  server.close(()=>process.exit(1));
+});
