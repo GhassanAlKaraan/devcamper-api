@@ -54,3 +54,10 @@ call this:
 
 the bootcamps location is defined by zipcode
 get bootcamps within 10,000 miles of location.
+
+
+// Advanced filtering
+
+?location.city=Lowell&housing=false
+?averageCost[lte]=10000
+?careers[in]=Business
