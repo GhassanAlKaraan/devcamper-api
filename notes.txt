@@ -47,3 +47,10 @@ exports.getBootcamp = async (req, res, next) => {
     next(err);
   }
 };
+
+// Get Bootcamps in radius of your current location
+call this:
+/api/v1/bootcamps/radius/02118/10000
+
+the bootcamps location is defined by zipcode
+get bootcamps within 10,000 miles of location.

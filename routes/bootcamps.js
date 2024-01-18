@@ -7,10 +7,13 @@ const {
   createBootcamp,
   updateBootcamp,
   deleteBootcamp,
+  getBootcampsInRadius
 } = require('../controllers/bootcamps');
 
 // Create express router instance
 const router = express.Router();
+
+router.route('/radius/:zipcode/:distance').get(getBootcampsInRadius);
 
 // Specify routes for methods
 router.route('/').get(getBootcamps).post(createBootcamp);
