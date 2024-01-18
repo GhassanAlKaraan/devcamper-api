@@ -41,9 +41,11 @@ const server = app.listen(
   console.log(`Server running in ${ENVIR} mode on port ${PORT}`.yellow.bold)
 );
 
+
+// Ya3ne eza sar ma sar w ma mna3ref 3anno
 // Handle unhandled promise rejections
 process.on('unhandledRejection', (err, promise) => {
-  console.log(`Error: ${err.message}`.red);
+  console.log(`(unhandledRejection) Error: ${err.message}`.red);
   // Close Server and close process
   server.close(() => process.exit(1));
 });
