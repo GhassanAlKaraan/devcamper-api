@@ -2,23 +2,61 @@ const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
 const Bootcamp = require('../models/Bootcamp');
 const geocoder = require('../utils/geocoder');
+
 // @desc    Get All Bootcamps
 // @route   GET /api/v1/bootcamps
 // @access  Public
 exports.getBootcamps = asyncHandler(async (req, res, next) => {
-
-
   let query;
-  let queryStr = JSON.stringify(req.query);
-  queryStr = queryStr.replace(/\b(gt|gte|lt|lte|in)\b/g, match => `$${match}`);
 
+  // Copy req.query with spread operator
+  const reqQuery = { ...req.query };
+
+  // Fields to exclude for filtering
+  const removeFields = ['select', 'sort', 'page', 'limit'];
+
+  // Remove the fields from reqQuery
+  removeFields.forEach((param) => delete reqQuery[param]);
+
+  // Create query string
+  let queryStr = JSON.stringify(reqQuery);
+
+  // Create operators ($gt, $gte, etc)
+  queryStr = queryStr.replace(
+    /\b(gt|gte|lt|lte|in)\b/g,
+    (match) => `$${match}`
+  );
+
+  // Finding resources with the query
   query = Bootcamp.find(JSON.parse(queryStr));
 
+  // Select fields
+  if (req.query.select) {
+    const fields = req.query.select.split(',').join(' ');
+    query = query.select(fields);
+  }
+
+  // Sort fields
+  if (req.query.sort) {
+    const sortBy = req.query.sort.split(',').join(' ');
+    query = query.sort(sortBy);
+  } else {
+    query = query.sort('-createdAt');
+  }
+
+  // Pagination
+  const page = parseInt(req.query.page, 10) || 1;
+  const limit = parseInt(req.query.page, 10) || 100;
+  const startIndex = (page - 1) * limit;
+  const endIndex = (page - 1) * limit;
+
+
+  query = query.skip(skip).limit(limit);
+
+  // Executing query
   const bootcamps = await query;
 
-  // console.log(req.query);
-  // const bootcamps = await Bootcamp.find(req.query);
-  // const bootcamps = await Bootcamp.find();
+  // Success response
   res
     .status(200)
     .json({ success: true, count: bootcamps.length, data: bootcamps });
@@ -79,12 +117,10 @@ exports.deleteBootcamp = asyncHandler(async (req, res, next) => {
   res.status(200).json({ success: true, data: {} });
 });
 
-
 // @desc    Get bootcamps within a radius
 // @route   GET /api/v1/bootcamps/radius/:zipcode/:distance   /:unit
 // @access  Private
 exports.getBootcampsInRadius = asyncHandler(async (req, res, next) => {
-
   const { zipcode, distance } = req.params;
 
   // Get lat/long from geocoder: can be done on frontend or backend
@@ -99,13 +135,12 @@ exports.getBootcampsInRadius = asyncHandler(async (req, res, next) => {
 
   const bootcamps = await Bootcamp.find({
     // Advanced querying
-    location: { $geoWithin: { $centerSphere: [[lng, lat], radius] } }
+    location: { $geoWithin: { $centerSphere: [[lng, lat], radius] } },
   });
 
   res.status(200).json({
     success: true,
     count: bootcamps.length,
-    data: bootcamps
-  })
-
+    data: bootcamps,
+  });
 });
