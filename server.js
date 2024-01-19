@@ -14,6 +14,7 @@ connectDB();
 
 // Load route files
 const bootcamps = require('./routes/bootcamps');
+const courses = require('./routes/courses');
 
 // Create an express instance
 const app = express();
@@ -31,6 +32,7 @@ if (ENVIR === 'development') {
 
 // Mount routers
 app.use('/api/v1/bootcamps', bootcamps);
+app.use('/api/v1/courses', courses);
 
 // Mount error handler middleware (here's the correct place to add it)
 app.use(errorHandler);
