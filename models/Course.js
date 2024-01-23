@@ -75,7 +75,7 @@ CourseSchema.post('save', async function() {
 });
 
 // Call getAverageCost after remove
-CourseSchema.post('remove', async function () {
+CourseSchema.post('deleteOne', async function () {
   await this.constructor.getAverageCost(this.bootcamp);
 });
 
