@@ -2,6 +2,7 @@ const express = require('express');
 const dotenv = require('dotenv');
 const colors = require('colors');
 const morgan = require('morgan');
+const cookieParser = require('cookie-parser');
 const errorHandler = require('./middleware/error');
 const connectDB = require('./config/db');
 const fileupload = require('express-fileupload');
@@ -23,8 +24,11 @@ const ENVIR = process.env.NODE_ENV;
 
 //! Mount middleware
 
-//* Mount express json parser
-app.use(express.json()); 
+//* Mount body parser
+app.use(express.json());
+
+//* Mount cookie parser
+app.use(cookieParser());
 
 //* Mount Dev logging middleware
 if (ENVIR === 'development') { 

@@ -12,18 +12,16 @@ const advancedResults = require('../middleware/advancedResults');
 
 const router = express.Router({ mergeParams: true });
 
-// const { protect, authorize } = require('../middleware/auth');
+const {protect} = require('../middleware/auth');
 
 router.route('/').get(advancedResults(Course, {
   path: 'bootcamp',
   select: 'name description',
-}), getCourses).post(addCourse);
+}), getCourses).post(protect, addCourse);
 
 router.route('/:id')
   .get(getCourse)
-  .put(updateCourse)
-  // .put(protect, authorize('publisher', 'admin'), updateCourse)
-  .delete(deleteCourse);
-  // .delete(protect, authorize('publisher', 'admin'), deleteCourse);
+  .put(protect, updateCourse)
+  .delete(protect, deleteCourse);
 
 module.exports = router;
