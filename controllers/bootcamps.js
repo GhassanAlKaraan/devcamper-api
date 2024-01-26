@@ -3,6 +3,7 @@ const asyncHandler = require('../middleware/async');
 const Bootcamp = require('../models/Bootcamp');
 const Course = require('../models/Course');
 const geocoder = require('../utils/geocoder');
+const path = require('path');
 
 // @desc    Get All Bootcamps
 // @route   GET /api/v1/bootcamps
@@ -14,7 +15,7 @@ exports.getBootcamps = asyncHandler(async (req, res, next) => {
   const reqQuery = { ...req.query };
 
   // Fields to exclude for filtering
-  const removeFields = ['select', 'sort', 'page', 'limit'];
+  const removeFields = ['select', 'sort', 'page', 'limit', 'includeCourses'];
 
   // Remove the fields from reqQuery
   removeFields.forEach((param) => delete reqQuery[param]);
@@ -26,7 +27,12 @@ exports.getBootcamps = asyncHandler(async (req, res, next) => {
   queryStr = queryStr.replace(/\b(gt|gte|lt|lte|in)\b/g, match => `$${match}`);
 
   // Finding resources with the query
-  query = Bootcamp.find(JSON.parse(queryStr)).populate('courses');
+  // query = Bootcamp.find(JSON.parse(queryStr)).populate('courses');
+  query = Bootcamp.find(JSON.parse(queryStr));
+  if (req.query.includeCourses === 'true') {
+    query = query.populate('courses');
+  }
+
 
   // Select fields
   if (req.query.select) {
@@ -161,4 +167,44 @@ exports.getBootcampsInRadius = asyncHandler(async (req, res, next) => {
     count: bootcamps.length,
     data: bootcamps,
   });
+});
+
+// @desc    Upload photo for bootcamp
+// @route   DELETE /api/v1/bootcamps/:id/photo
+// @access  Private
+exports.bootcampPhotoUpload = asyncHandler(async (req, res, next) => {
+  
+  const bootcamp = await Bootcamp.findById(req.params.id);
+  const file = req.files.file;
+  const MAXSIZE= process.env.MAX_FILE_UPLOAD;
+  const UPLOADPATH = process.env.FILE_UPLOAD_PATH;
+  
+  if (!bootcamp) {
+    return next(new ErrorResponse(`Bootcamp not found with id: ${req.params.id}`, 404));
+  }
+  if(!req.files){
+    return next(new ErrorResponse(`Please upload a file`, 400));
+  }
+  if(!file.mimetype.startsWith('image')){
+    return next(new ErrorResponse(`Please upload an image file`, 400));
+  }
+  if(file.size> MAXSIZE){
+    const sizeInMb = MAXSIZE/1000000;
+    return next(new ErrorResponse(`Please upload an image less than ${sizeInMb}MB`, 400));
+  }
+
+  // You can use timestamp or any other format for naming
+  file.name = `photo_${bootcamp._id}${path.parse(file.name).ext}`;
+  // Move file
+  file.mv(`${UPLOADPATH}/${file.name}`, async err =>{
+    if(err){
+      console.log(err);
+      return next(new ErrorResponse(`Problem with file upload`, 500));
+    }
+    await Bootcamp.findByIdAndUpdate(req.params.id, {photo: file.name});
+
+    res.status(200).json({ success: true, data: file.name});
+  });
+
+  
 });

@@ -1,51 +1,55 @@
-// Load required dependencies
 const express = require('express');
 const dotenv = require('dotenv');
 const colors = require('colors');
-const morgan = require('morgan'); // Logging middleware dependency
+const morgan = require('morgan');
 const errorHandler = require('./middleware/error');
 const connectDB = require('./config/db');
+const fileupload = require('express-fileupload');
+const path = require('path');
 
-// Load env vars
-dotenv.config({ path: './config/config.env' });
-// console.log(process.env);
-// Connect to Database
-connectDB();
+//! Load configs
+dotenv.config({ path: './config/config.env' }); //1 Load env vars
+connectDB(); //2 Connect to Database
 
-// Load route files
+//! Load route files
 const bootcamps = require('./routes/bootcamps');
 const courses = require('./routes/courses');
 
-// Create an express instance
+//! Prepare express app
 const app = express();
-// Assign evn vars
-const PORT = process.env.PORT || 5000; // if not available for some reason
+const PORT = process.env.PORT || 5000;
 const ENVIR = process.env.NODE_ENV;
 
-// Mount Body parser
-app.use(express.json());
+//! Mount middleware
 
-// Mount Dev logging middleware
-if (ENVIR === 'development') {
+//* Mount express json parser
+app.use(express.json()); 
+
+//* Mount Dev logging middleware
+if (ENVIR === 'development') { 
   app.use(morgan('dev'));
 }
 
-// Mount routers
+//* File uploading
+app.use(fileupload());
+
+//* Set static folder
+app.use(express.static(path.join(__dirname, 'public')));
+
+//* Mount express routers
 app.use('/api/v1/bootcamps', bootcamps);
 app.use('/api/v1/courses', courses);
 
-// Mount error handler middleware (here's the correct place to add it)
+//* Mount error handler middleware (here's the correct place to add it)
 app.use(errorHandler);
 
-// Express listener
+//! Express listener
 const server = app.listen(
   PORT,
   console.log(`Server running in ${ENVIR} mode on port ${PORT}`.yellow.bold)
 );
 
-
-// Ya3ne eza sar ma sar w ma mna3ref 3anno
-// Handle unhandled promise rejections
+//! Handle unhandled promise rejections
 process.on('unhandledRejection', (err, promise) => {
   console.log(`(unhandledRejection) Error: ${err.message}`.red);
   // Close Server and close process
