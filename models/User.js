@@ -1,7 +1,7 @@
 // const crypto = require('crypto');
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
-// const jwt = require('jsonwebtoken');
+const jwt = require('jsonwebtoken');
 // const randomize = require('randomatic');
 
 const UserSchema = new mongoose.Schema({
@@ -31,17 +31,17 @@ const UserSchema = new mongoose.Schema({
   },
   resetPasswordToken: String,
   resetPasswordExpire: Date,
-//   confirmEmailToken: String,
-//   isEmailConfirmed: {
-//     type: Boolean,
-//     default: false,
-//   },
-//   twoFactorCode: String,
-//   twoFactorCodeExpire: Date,
-//   twoFactorEnable: {
-//     type: Boolean,
-//     default: false,
-//   },
+  //   confirmEmailToken: String,
+  //   isEmailConfirmed: {
+  //     type: Boolean,
+  //     default: false,
+  //   },
+  //   twoFactorCode: String,
+  //   twoFactorCodeExpire: Date,
+  //   twoFactorEnable: {
+  //     type: Boolean,
+  //     default: false,
+  //   },
   createdAt: {
     type: Date,
     default: Date.now,
@@ -66,12 +66,12 @@ UserSchema.pre('save', async function (next) {
 //   next();
 // });
 
-// // Sign JWT and return
-// UserSchema.methods.getSignedJwtToken = function () {
-//   return jwt.sign({ id: this._id }, process.env.JWT_SECRET, {
-//     expiresIn: process.env.JWT_EXPIRE,
-//   });
-// };
+// Sign JWT and return
+UserSchema.methods.getSignedJwtToken = function () {
+  return jwt.sign({ id: this._id }, process.env.JWT_SECRET, {
+    expiresIn: process.env.JWT_EXPIRE,
+  });
+};
 
 // // Match user entered password to hashed password in database
 // UserSchema.methods.matchPassword = async function (enteredPassword) {
