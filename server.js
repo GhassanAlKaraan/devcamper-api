@@ -14,6 +14,7 @@ connectDB(); //2 Connect to Database
 //! Load route files
 const bootcamps = require('./routes/bootcamps');
 const courses = require('./routes/courses');
+const auth = require('./routes/auth');
 
 //! Prepare express app
 const app = express();
@@ -39,6 +40,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 //* Mount express routers
 app.use('/api/v1/bootcamps', bootcamps);
 app.use('/api/v1/courses', courses);
+app.use('/api/v1/auth', auth);
 
 //* Mount error handler middleware (here's the correct place to add it)
 app.use(errorHandler);
