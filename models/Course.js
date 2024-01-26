@@ -75,15 +75,15 @@ CourseSchema.post('save', async function () {
 });
 
 // Call getAverageCost after remove
-CourseSchema.post('deleteOne', async function () {
-  await this.constructor.getAverageCost(this.bootcamp);
-});
+// CourseSchema.post('deleteOne', async function () {
+//   await this.constructor.getAverageCost(this.bootcamp);
+// });
 
 // Call getAverageCost after tuition update
-CourseSchema.post('findOneAndUpdate', async function (doc) {
-  if (this.tuition != doc.tuition) {
-    await doc.constructor.getAverageCost(doc.bootcamp);
-  }
-});
+// CourseSchema.post('findOneAndUpdate', async function (doc) {
+//   if (this.tuition != doc.tuition) {
+//     await doc.constructor.getAverageCost(doc.bootcamp);
+//   }
+// });
 
 module.exports = mongoose.model('Course', CourseSchema);
