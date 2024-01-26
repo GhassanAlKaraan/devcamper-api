@@ -1,6 +1,6 @@
 // const crypto = require('crypto');
 const mongoose = require('mongoose');
-// const bcrypt = require('bcryptjs');
+const bcrypt = require('bcryptjs');
 // const jwt = require('jsonwebtoken');
 // const randomize = require('randomatic');
 
@@ -48,15 +48,15 @@ const UserSchema = new mongoose.Schema({
   },
 });
 
-// // Encrypt password using bcrypt
-// UserSchema.pre('save', async function (next) {
-//   if (!this.isModified('password')) {
-//     next();
-//   }
+// Encrypt password using bcrypt
+UserSchema.pre('save', async function (next) {
+  if (!this.isModified('password')) {
+    next();
+  }
 
-//   const salt = await bcrypt.genSalt(10);
-//   this.password = await bcrypt.hash(this.password, salt);
-// });
+  const salt = await bcrypt.genSalt(10);
+  this.password = await bcrypt.hash(this.password, salt);
+});
 
 // // Encrypt password using bcrypt while updating (admin)
 // UserSchema.pre("findOneAndUpdate", async function (next) {
