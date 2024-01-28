@@ -22,12 +22,10 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 const ENVIR = process.env.NODE_ENV;
 
-//! Mount middleware
-
-//* Mount body parser
+//! Mount body parser
 app.use(express.json());
 
-//* Mount cookie parser
+//! Mount cookie parser
 app.use(cookieParser());
 
 //* Mount Dev logging middleware
@@ -35,19 +33,19 @@ if (ENVIR === 'development') {
   app.use(morgan('dev'));
 }
 
-//* File uploading
+//! File uploading
 app.use(fileupload());
 
-//* Set static folder
+//! Set static folder
 app.use(express.static(path.join(__dirname, 'public')));
 
-//* Mount express routers
+//! Mount express routers
 app.use('/api/v1/bootcamps', bootcamps);
 app.use('/api/v1/courses', courses);
 app.use('/api/v1/auth', auth);
 
 //* Mount error handler middleware (here's the correct place to add it)
-app.use(errorHandler);
+app.use(errorHandler); // Handle any 500 server errors
 
 //! Express listener
 const server = app.listen(
