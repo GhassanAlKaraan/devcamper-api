@@ -137,13 +137,6 @@ BootcampSchema.pre('save', async function(next) {
 });
 
 // Cascade delete courses when a bootcamp is deleted
-// BootcampSchema.pre('deleteOne', {document: true, query: true }, async function(next) {
-//   console.log(`Courses being removed from bootcamp ${this._id}`);
-//   await this.model('Course').deleteMany({ bootcamp: this._id });
-//   // console.log(`Reviews being removed from bootcamp ${this._id}`);
-//   //  await this.model('Review').deleteMany({ bootcamp: this._id });
-//   next();
-// });
 BootcampSchema.pre('deleteOne', { document: true }, async function (next) {
   console.log(`Courses being removed from bootcamp ${this._id}`);
   await mongoose.model('Course').deleteMany({ bootcamp: this._id });
