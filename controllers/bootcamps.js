@@ -95,6 +95,15 @@ exports.deleteBootcamp = asyncHandler(async (req, res, next) => {
       new ErrorResponse(`Bootcamp not found with id: ${req.params.id}`, 404)
     );
   }
+
+  if (bootcamp.user.toString() !== req.user.id && req.user.role !== 'admin') {
+    return next(
+      new ErrorResponse(
+        `User ${req.user.id} is not authorized to delete this bootcamp`,
+        401
+      )
+    );
+  }
   const deletedBootcamp = await bootcamp.deleteOne();
   await Course.deleteMany({ bootcamp: deletedBootcamp.id });
 
@@ -141,6 +150,14 @@ exports.bootcampPhotoUpload = asyncHandler(async (req, res, next) => {
   if (!bootcamp) {
     return next(
       new ErrorResponse(`Bootcamp not found with id: ${req.params.id}`, 404)
+    );
+  }
+  if (bootcamp.user.toString() !== req.user.id && req.user.role !== 'admin') {
+    return next(
+      new ErrorResponse(
+        `User ${req.user.id} is not authorized to delete this bootcamp`,
+        401
+      )
     );
   }
   if (!req.files) {
