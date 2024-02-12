@@ -146,9 +146,9 @@ BootcampSchema.pre('deleteOne', { document: true }, async function (next) {
 
 // Reverse populate with virtuals
 BootcampSchema.virtual('courses', {
-  ref: 'Course',
-  localField: '_id',
-  foreignField: 'bootcamp',
+  ref: 'Course', // reference the mongoose model
+  localField: '_id', // PK
+  foreignField: 'bootcamp', // FK
   justOne: false // we want an array of courses for each bootcamp
 });
 
